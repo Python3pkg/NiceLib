@@ -21,7 +21,7 @@ def test_if(num, result):
         #endif
     """.format(num))
     parser.parse()
-    print(parser.get_any_macro('y').body_str())
+    print((parser.get_any_macro('y').body_str()))
     assert parser.get_any_macro('y').body_str() == result
 
 
@@ -47,7 +47,7 @@ def test_nested_if(num, result):
         #endif
     """.format(num))
     parser.parse()
-    print(parser.get_any_macro('y').body_str())
+    print((parser.get_any_macro('y').body_str()))
     assert parser.get_any_macro('y').body_str() == result
 
 
@@ -73,7 +73,7 @@ def test_nested_if2(num, result):
         #endif
     """.format(num))
     parser.parse()
-    print(parser.get_any_macro('y').body_str())
+    print((parser.get_any_macro('y').body_str()))
     assert parser.get_any_macro('y').body_str() == result
 
 
@@ -99,9 +99,9 @@ def test_if_each(num, result):
         #endif
     """.format(num))
     parser.parse()
-    print(parser.get_any_macro('x').body_str())
-    print(parser.get_any_macro('y').body_str())
-    print(parser.get_any_macro('z').body_str())
+    print((parser.get_any_macro('x').body_str()))
+    print((parser.get_any_macro('y').body_str()))
+    print((parser.get_any_macro('z').body_str()))
     assert parser.get_any_macro('x').body_str() == result[0]
     assert parser.get_any_macro('y').body_str() == result[1]
     assert parser.get_any_macro('z').body_str() == result[2]
@@ -129,9 +129,9 @@ def test_if_each2(num, result):
         #endif
     """.format(num))
     parser.parse()
-    print(parser.get_any_macro('x').body_str())
-    print(parser.get_any_macro('y').body_str())
-    print(parser.get_any_macro('z').body_str())
+    print((parser.get_any_macro('x').body_str()))
+    print((parser.get_any_macro('y').body_str()))
+    print((parser.get_any_macro('z').body_str()))
     assert parser.get_any_macro('x').body_str() == result[0]
     assert parser.get_any_macro('y').body_str() == result[1]
     assert parser.get_any_macro('z').body_str() == result[2]

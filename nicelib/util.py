@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016-2017 Nate Bogdanowicz
-from past.builtins import basestring
+from past.builtins import str
 
 import sys
 import os
@@ -12,7 +12,7 @@ is_64bit = sys.maxsize > 2**32
 
 
 def select_platform_value(platform_dict):
-    for platform_pattern, value in platform_dict.items():
+    for platform_pattern, value in list(platform_dict.items()):
         bitwidth = None
         if ':' in platform_pattern:
             platform_pattern, bitwidth = platform_pattern.split(':')
@@ -28,7 +28,7 @@ def select_platform_value(platform_dict):
 
 def to_tuple(value):
     """Convert value to a tuple, or if it is a string, wrap it in a tuple"""
-    return (value,) if isinstance(value, basestring) else tuple(value)
+    return (value,) if isinstance(value, str) else tuple(value)
 
 
 def handle_header_path(path):
@@ -42,7 +42,7 @@ def handle_header_path(path):
     of strings indicating header paths. Optionally you may include a 'path' entry, which specifies
     a list of directories where the headers may be located.
     """
-    if isinstance(path, basestring):
+    if isinstance(path, str):
         if os.path.exists(path):
             return path
         else:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016-2017 Nate Bogdanowicz
-from __future__ import print_function
+
 
 import sys
 import os

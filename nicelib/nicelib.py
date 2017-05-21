@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # Copyright 2015-2017 Nate Bogdanowicz
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+
 
 from builtins import str, zip
-from past.builtins import basestring
+from past.builtins import str
 from future.utils import with_metaclass
 
 import sys
@@ -13,6 +13,7 @@ import logging as log
 from inspect import isfunction, getargspec
 from . import test_mode_is, _test_mode
 from .util import to_tuple
+import collections
 
 __all__ = ['NiceLib', 'NiceObjectDef']
 FLAGS = ('prefix', 'ret', 'struct_maker', 'buflen', 'use_numpy', 'free_buf')
@@ -31,7 +32,7 @@ class StateNode(object):
         prefix = ' ' * indent
         print(prefix + repr(self.attrs))
 
-        for args, node in self.children.items():
+        for args, node in list(self.children.items()):
             print(prefix + str(args[0]) + str(args[1:]))
             node.show(buf, indent + 2)
 
@@ -519,7 +520,7 @@ class NiceObjectDef(object):
         self.attrs = attrs
         self.n_handles = n_handles
 
-        if not (init is None or isinstance(init, basestring)):
+        if not (init is None or isinstance(init, str)):
             raise TypeError("NiceObjectDef's `init` arg must be a string that names a wrapped "
                             "function. Got '{}' instead.".format(type(init).__name__))
         self.init = init
@@ -625,7 +626,7 @@ class LibMeta(type):
                 if niceobjdef.attrs is None:
                     niceobjdef.names.remove(name)  # Remove self
                 else:
-                    for attr_name, attr_val in niceobjdef.attrs.items():
+                    for attr_name, attr_val in list(niceobjdef.attrs.items()):
                         classdict[attr_name] = attr_val
                         func_to_niceobj[attr_name] = niceobjdef
                 niceobjectdefs[name] = niceobjdef
@@ -638,11 +639,11 @@ class LibMeta(type):
             'ignore': mro_lookup('_ret_ignore')
         }
 
-        for name, value in classdict.items():
+        for name, value in list(classdict.items()):
             if name.startswith('_ret_') and isfunction(value):
                 ret_handlers[name[5:]] = value
 
-        for name, value in classdict.items():
+        for name, value in list(classdict.items()):
             if (not name.startswith('_') and not isinstance(value, NiceObjectDef)):
                 log.debug("Handling NiceLib attr '%s'", name)
                 sig_tup = None
@@ -695,7 +696,7 @@ class LibMeta(type):
                         continue
 
                     ret_handler = flags['ret']
-                    if isinstance(ret_handler, basestring):
+                    if isinstance(ret_handler, str):
                         flags['ret'] = ret_handlers[flags['ret']]
 
                     func = _cffi_wrapper(ffi, ffi_func, name, sig_tup, **flags)
@@ -709,20 +710,20 @@ class LibMeta(type):
                 classdict[name] = LibFunction(func, repr_str)
 
         # Create NiceObject classes
-        for cls_name, niceobjdef in niceobjectdefs.items():
+        for cls_name, niceobjdef in list(niceobjectdefs.items()):
             # Need to use a separate function so we have a per-class closure
             classdict[cls_name] = NiceClassMeta(cls_name, niceobjdef, ffi, funcs, user_funcs)
 
         # Add macro defs
         if defs:
-            for name, attr in defs.items():
+            for name, attr in list(defs.items()):
                 for prefix in base_flags['prefix']:
                     if name.startswith(prefix):
                         shortname = name[len(prefix):]
                         if shortname in classdict:
                             warnings.warn("Conflicting name {}, ignoring".format(shortname))
                         else:
-                            classdict[shortname] = staticmethod(attr) if callable(attr) else attr
+                            classdict[shortname] = staticmethod(attr) if isinstance(attr, collections.Callable) else attr
                         break
 
         # Add enum constant defs

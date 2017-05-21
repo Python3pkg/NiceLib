@@ -78,9 +78,9 @@ with open(os.path.join(base_dir, 'nicelib', '__about__.py')) as f:
     exec(f.read(), about)
 
 # General information about the project.
-project = u'NiceLib'
-copyright = u'2016, Nate Bogdanowicz'
-author = u'Nate Bogdanowicz'
+project = 'NiceLib'
+copyright = '2016, Nate Bogdanowicz'
+author = 'Nate Bogdanowicz'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -253,8 +253,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'NiceLib.tex', u'NiceLib Documentation',
-     u'Nate Bogdanowicz', 'manual'),
+    (master_doc, 'NiceLib.tex', 'NiceLib Documentation',
+     'Nate Bogdanowicz', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -283,7 +283,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'nicelib', u'NiceLib Documentation',
+    (master_doc, 'nicelib', 'NiceLib Documentation',
      [author], 1)
 ]
 
@@ -297,7 +297,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'NiceLib', u'NiceLib Documentation',
+    (master_doc, 'NiceLib', 'NiceLib Documentation',
      author, 'NiceLib', 'One line description of project.',
      'Miscellaneous'),
 ]

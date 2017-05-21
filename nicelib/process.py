@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016-2017 Nate Bogdanowicz
-from __future__ import unicode_literals, division, print_function
+
 from future import standard_library
 standard_library.install_aliases()
 from builtins import str
-from past.builtins import basestring
+from past.builtins import str
 from future.utils import PY2
 
 import re
@@ -133,7 +133,7 @@ class Token(object):
         return self.type is other_type and self.string == other_string
 
     def __eq__(self, other):
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             return self.string == other
         elif isinstance(other, TokenType):
             return self.type == other
@@ -357,7 +357,7 @@ class Parser(object):
         return (name in self.func_macros) or (name in self.predef_func_macros)
 
     def any_macro_defined(self, name):
-        return any(name in d.keys() for d in (self.obj_macros, self.func_macros,
+        return any(name in list(d.keys()) for d in (self.obj_macros, self.func_macros,
                                               self.predef_obj_macros, self.predef_func_macros))
 
     def get_obj_macro(self, name, default=None):
@@ -999,7 +999,7 @@ class TreeModifier(c_ast.NodeVisitor):
             else:
                 setattr(node, child_name, result)
 
-        for attr_name, node_list in lists.items():
+        for attr_name, node_list in list(lists.items()):
             node_list = [n for n in node_list if n is not None]
             setattr(node, attr_name, node_list)
 
@@ -1286,7 +1286,7 @@ class Generator(object):
 
         # pycparser doesn't know about these types by default, but cffi does. We just need to make
         # sure that pycparser knows these are types, the particular type is unimportant
-        common_types = self.common_type_names(tokens, cffi.commontypes.COMMON_TYPES.keys())
+        common_types = self.common_type_names(tokens, list(cffi.commontypes.COMMON_TYPES.keys()))
         fake_types = '\n'.join('typedef int {};'.format(t) for t in common_types)
         self.parse(fake_types)
 
@@ -1614,7 +1614,7 @@ def process_file(in_fname, out_fname, minify):
 
 
 def to_str_seq(arg):
-    return (arg,) if isinstance(arg, basestring) else arg
+    return (arg,) if isinstance(arg, str) else arg
 
 
 def process_headers(header_paths, predef_path=None, update_cb=None, ignored_headers=(),
@@ -1749,7 +1749,7 @@ def generate_bindings(header_info, outfile, prefix=(), add_ret_ignore=False, nic
         If True, automatically set the first argument of every NiceObject function to ``'in'``.
         True by default.
     """
-    if isinstance(outfile, basestring):
+    if isinstance(outfile, str):
         with open(outfile, 'w') as f:
             return generate_bindings(header_info, f, prefix, add_ret_ignore, niceobj_prefix,
                                      fill_handle, **kwds)
@@ -1761,14 +1761,14 @@ def generate_bindings(header_info, outfile, prefix=(), add_ret_ignore=False, nic
     _, _, tree = process_headers(header_paths, return_ast=True, **kwds)
     toplevel_sigs = []
     niceobj_sigs = defaultdict(list)
-    prefixes = (prefix, '') if isinstance(prefix, basestring) else prefix + ('',)
+    prefixes = (prefix, '') if isinstance(prefix, str) else prefix + ('',)
 
     for ext in tree.ext:
         if isinstance(ext, c_ast.Decl) and isinstance(ext.type, c_ast.FuncDecl):
             funcdecl = ext.type
             func_name = funcdecl.type.declname
             is_niceobj = True
-            for niceobj_name, prefix in niceobj_prefix.items():
+            for niceobj_name, prefix in list(niceobj_prefix.items()):
                 if func_name.startswith(prefix):
                     break
             else:
@@ -1810,7 +1810,7 @@ def generate_bindings(header_info, outfile, prefix=(), add_ret_ignore=False, nic
         outfile.write(indent)
         outfile.write(sig)
 
-    for niceobj_name, sigs in niceobj_sigs.items():
+    for niceobj_name, sigs in list(niceobj_sigs.items()):
         if niceobj_name:
             outfile.write("\n")
             outfile.write(indent)
@@ -1875,7 +1875,7 @@ def modify_pattern(tokens, pattern):
     def matches(token, target):
         if isinstance(target, TokenType):
             return token.type is target
-        elif isinstance(target, basestring):
+        elif isinstance(target, str):
             return token.string == target
         return False
 
@@ -1887,7 +1887,7 @@ def modify_pattern(tokens, pattern):
                     keep, target = next(p_it)
                 except StopIteration:
                     pattern_completed = True
-        elif isinstance(target, basestring) and target.startswith('~~') and target.endswith('~~'):
+        elif isinstance(target, str) and target.startswith('~~') and target.endswith('~~'):
             found_end = False
             right = target[2]
             left = {'}': '{', ')': '(', ']': '['}[right]
@@ -2106,7 +2106,7 @@ class ParseHelper(object):
 
         Raises StopIteration if we're already at the end of the token stream.
         """
-        if isinstance(tokens, basestring) or not isinstance(tokens, Sequence):
+        if isinstance(tokens, str) or not isinstance(tokens, Sequence):
             tokens = (tokens,)
         buf = []
 
@@ -2130,7 +2130,7 @@ class ParseHelper(object):
 
         Raises StopIteration if we're already at the end of the token stream.
         """
-        if isinstance(tokens, basestring) or not isinstance(tokens, Sequence):
+        if isinstance(tokens, str) or not isinstance(tokens, Sequence):
             tokens = (tokens,)
         buf = []
 
